@@ -1,0 +1,358 @@
+# CTF HTML (SQL Injection Version)
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ГДЕ ФЛАГ?!?!?!</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        :root {
+            --neon: #00ffcc;
+            --red: #ff0033;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #110022, #001122);
+            color: var(--neon);
+            font-family: 'Press Start 2P', system-ui;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            text-shadow: 0 0 10px var(--neon), 0 0 20px var(--neon);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255,255,255,0.03) 40px,
+                    rgba(255,255,255,0.03) 80px
+                );
+            pointer-events: none;
+            z-index: 1;
+            animation: bgScan 8s linear infinite;
+        }
+
+        @keyframes bgScan {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 400px; }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(3px, -3px); }
+            60% { transform: translate(-2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes floatQ {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-120vh) rotate(720deg);
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 5rem;
+            text-align: center;
+            margin: 40px 0 10px;
+            letter-spacing: 10px;
+            color: #ff0033;
+            animation: glitch 1.5s infinite;
+            text-shadow:
+                0 0 20px #ff0033,
+                0 0 40px #ff0033,
+                0 0 60px #ff0033;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.85;
+            letter-spacing: 5px;
+        }
+
+        .q {
+            position: fixed;
+            font-size: 4rem;
+            color: rgba(255,255,255,0.1);
+            pointer-events: none;
+            z-index: 2;
+            animation: floatQ 25s linear infinite;
+        }
+
+        .text-chaos {
+            font-size: 2rem;
+            line-height: 1.5;
+            text-align: center;
+            margin: 50px 0;
+            animation: flicker 3s infinite alternate;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 60px 0;
+        }
+
+        .fake-btn {
+            background: #220022;
+            color: #ff0033;
+            border: 6px solid var(--red);
+            padding: 30px;
+            font-size: 1.3rem;
+            font-family: 'Press Start 2P';
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            text-align: center;
+            box-shadow: 0 0 30px #ff0033;
+        }
+
+        .fake-btn:hover {
+            transform: scale(1.05) rotate(1deg);
+            background: #440033;
+            box-shadow: 0 0 50px #ff00aa;
+        }
+
+        .terminal {
+            margin: 80px auto;
+            max-width: 900px;
+            background: rgba(0,0,0,0.8);
+            border: 4px solid #00ffcc;
+            padding: 30px;
+            box-shadow: 0 0 40px #00ffcc;
+        }
+
+        .terminal-title {
+            margin-bottom: 25px;
+            color: #00ffcc;
+            font-size: 1rem;
+        }
+
+        .terminal input {
+            width: 100%;
+            padding: 18px;
+            background: black;
+            border: 3px solid #00ffcc;
+            color: #00ffcc;
+            font-size: 1rem;
+            font-family: 'Press Start 2P';
+            outline: none;
+        }
+
+        .terminal button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 18px;
+            background: #001122;
+            color: #00ffcc;
+            border: 3px solid #00ffcc;
+            font-family: 'Press Start 2P';
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .terminal button:hover {
+            background: #003344;
+            transform: scale(1.02);
+        }
+
+        #output {
+            margin-top: 25px;
+            min-height: 80px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: #00ffcc;
+            word-break: break-word;
+        }
+
+        .hint {
+            margin-top: 40px;
+            opacity: 0.75;
+            line-height: 1.8;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 100px;
+            padding-bottom: 60px;
+            opacity: 0.4;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+        }
+
+        .fake-flag {
+            color: transparent;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- flag{totally_real_flag_trust_me} -->
+
+    <div class="q" style="left:5%; animation-delay:0s;">?</div>
+    <div class="q" style="left:20%; animation-delay:2s;">??</div>
+    <div class="q" style="left:40%; animation-delay:4s;">?</div>
+    <div class="q" style="left:60%; animation-delay:1s;">???</div>
+    <div class="q" style="left:80%; animation-delay:5s;">?</div>
+
+    <div class="container">
+
+        <h1>ГДЕ ФЛАГ?</h1>
+
+        <div class="subtitle">
+            NOTHING IS REAL • EVERYTHING IS HIDDEN • TRUST NO SOURCE
+        </div>
+
+        <div class="text-chaos">
+            ГДЕ ФЛАГ?<br>
+            ГДЕ ФЛАГ?<br>
+            ГДЕ ФЛАГ?<br>
+            ВСЁ СПРЯТАНО<br>
+            ВСЁ СЛОМАНО
+        </div>
+
+        <div class="buttons-grid">
+            <button class="fake-btn">ПОЛУЧИТЬ ФЛАГ</button>
+            <button class="fake-btn">ПОЛУЧИТЬ ФЛАГ</button>
+            <button class="fake-btn">ПОЛУЧИТЬ ФЛАГ</button>
+            <button class="fake-btn">ПОЛУЧИТЬ ФЛАГ</button>
+            <button class="fake-btn">ПОЛУЧИТЬ ФЛАГ</button>
+            <button class="fake-btn">ПОЛУЧИТЬ ФЛАГ</button>
+        </div>
+
+        <div class="terminal">
+
+            <div class="terminal-title">
+                SECURE DATABASE ACCESS TERMINAL v0.0.1
+            </div>
+
+            <input
+                type="text"
+                id="query"
+                placeholder="ENTER USERNAME"
+                autocomplete="off"
+            >
+
+            <button onclick="searchUser()">
+                SEARCH
+            </button>
+
+            <div id="output">
+                waiting for input...
+            </div>
+
+            <div class="hint">
+                Восемь врат формируют каждый символ.<br>
+                Стражи стоят по возрастанию силы.<br>
+                Но один исчез между третьим и пятым братом.
+            </div>
+
+        </div>
+
+        <div class="text-chaos" style="font-size:1.5rem;">
+            ??? ??? ???<br>
+            FIND THE REAL SOURCE<br>
+            THE DATABASE REMEMBERS EVERYTHING
+        </div>
+
+        <footer>
+            © 2026 SECRET CTF LAB • NOTHING WORKS • EVERYTHING LEAKS
+        </footer>
+
+    </div>
+
+    <script>
+
+        document.querySelectorAll('.fake-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.innerText = 'NO FLAG';
+                setTimeout(() => {
+                    btn.innerText = 'ПОЛУЧИТЬ ФЛАГ';
+                }, 800);
+            });
+        });
+
+        async function searchUser() {
+
+            const value = document.getElementById('query').value;
+            const output = document.getElementById('output');
+
+            output.innerText = 'searching database...';
+
+            try {
+
+                const response = await fetch('/login?user=' + encodeURIComponent(value));
+
+                const text = await response.text();
+
+                output.innerText = text;
+
+            } catch (e) {
+
+                output.innerText =
+                    'database connection failed...\n' +
+                    'maybe the backend is not running?';
+            }
+        }
+
+        setInterval(() => {
+
+            const q = document.createElement('div');
+
+            q.className = 'q';
+            q.textContent = '?';
+            q.style.left = Math.random() * 100 + '%';
+            q.style.fontSize = (3 + Math.random() * 3) + 'rem';
+            q.style.animationDuration = (15 + Math.random() * 20) + 's';
+
+            document.body.appendChild(q);
+
+            setTimeout(() => q.remove(), 30000);
+
+        }, 1000);
+
+    </script>
+
+</body>
+</html>
