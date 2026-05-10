@@ -51,54 +51,7 @@ def init_db():
     ''')
 
     real_code = r'''
-s = ""
-i = 1
-
-while True:
-
-    if i % 2 != 0:
-        s += "0"
-    else:
-        s += "1"
-
-    if i % 3 != 0:
-        s += "1"
-    else:
-        s += "0"
-
-    if i % 5 != 0:
-        s += "1"
-    else:
-        s += "0"
-
-    # ????
-
-    if i % 11 != 0:
-        s += "0"
-    else:
-        s += "1"
-
-    if i % 13 != 0:
-        s += "1"
-    else:
-        s += "0"
-
-    if i % 17 != 0:
-        s += "0"
-    else:
-        s += "1"
-
-    if i % 19 != 0:
-        s += "1"
-    else:
-        s += "0"
-
-    i += 1
-
-    if len(s) >= 240:
-        break
-
-print(s)
+A9DIWENPEJ/5.UEF$DF/5RX51G6C8BWR63/D7Y9E+9P+8
 '''
 
     cur.execute(
